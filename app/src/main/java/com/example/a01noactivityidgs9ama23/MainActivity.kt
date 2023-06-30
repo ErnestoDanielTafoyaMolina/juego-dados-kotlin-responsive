@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityMainBinding
 
-    var con = 0
+    //var con = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +30,19 @@ class MainActivity : AppCompatActivity() {
 
         model = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
+        if(model.getUsernameValue().isNullOrEmpty()){
+            binding.edtUsername.visibility=View.VISIBLE
+            binding.btnUsername.visibility=View.VISIBLE
+            binding.tvUsername.visibility=View.GONE
+        }else{
+            binding.edtUsername.visibility=View.GONE
+            binding.btnUsername.visibility=View.GONE
+            binding.tvUsername.visibility=View.VISIBLE
+        }
+
         binding.btnRoll.setOnClickListener {
-            con +=1
+            //con +=1
+            model.setTimes(model.getTimes()?.plus(1))
             roll()
         }
 
@@ -58,9 +69,9 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-       /* model.username.observe(this,){
-
-        }*/
+       model.username.observe(this,){
+            binding.tvUsername.text =it.toString()
+        }
 
        binding.btnUsername?.setOnClickListener{
             addUsername(it)
@@ -68,19 +79,19 @@ class MainActivity : AppCompatActivity() {
         binding.tvUsername?.setOnClickListener{
             updateUsername(it)
         }
-
         binding.btnReset.setOnClickListener {
-            con=0
+            model.setTimes(0)
+            //con=0
             reset()
         }
-
         binding.btnTimes.setOnClickListener {
-            Toast.makeText(this,"Clicked $con times", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"Clicked ${model.getTimes()} times", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun addUsername(view: View?) {
         binding.tvUsername?.text=binding.edtUsername?.text
+        model.setUsernameValue(binding.tvUsername?.text.toString())
         binding.edtUsername?.visibility=View.GONE
        view?.visibility=View.GONE
         binding.tvUsername?.visibility=View.VISIBLE
@@ -88,20 +99,16 @@ class MainActivity : AppCompatActivity() {
         inputMethodManager.hideSoftInputFromWindow(view?.windowToken,0)
     }
 
-    fun updateUsername(view: View?){
+    private fun updateUsername(view: View?){
         binding.edtUsername?.visibility=View.VISIBLE
         binding.btnUsername?.visibility=View.VISIBLE
         view?.visibility=View.GONE
         binding.edtUsername?.requestFocus()
         val showKbd=getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         showKbd.showSoftInput(binding.edtUsername,0)
-        showKbd.showSoftInput(binding.edtUsername,0)
     }
 
     fun roll() {
-        //textDice1= binding.txtDice1
-        //textDice2= binding.txtDice2
-
         val numDado1 = (1..6).random()
         model.setDice1NumberValue(numDado1)
 
@@ -110,16 +117,8 @@ class MainActivity : AppCompatActivity() {
 
     }
     fun reset() {
-        var imageDice1= binding.imgDice1
-        var imageDice2= binding.imgDice2
-
-        imageDice1.setImageResource(R.drawable.empty_dice)
-        imageDice2.setImageResource(R.drawable.empty_dice)
-
-        var textDice1 = binding.txtDice1
-        var textDice2 = binding.txtDice2
-        textDice1.text = "dice1"
-        textDice2.text = "dice1"
+        model.setDice1NumberValue(0)
+        model.setDice2NumberValue(0)
         Toast.makeText(this,"Game reseted", Toast.LENGTH_SHORT).show()
     }
 }

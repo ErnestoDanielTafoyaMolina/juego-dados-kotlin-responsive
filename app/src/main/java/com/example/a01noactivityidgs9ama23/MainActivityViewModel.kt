@@ -8,6 +8,8 @@ class MainActivityViewModel:ViewModel() {
     var dice1Number:MutableLiveData<Int> = MutableLiveData<Int>().apply{value=0}
     var dice2Number:MutableLiveData<Int> = MutableLiveData<Int>().apply{value=0}
     var username:MutableLiveData<String> =MutableLiveData<String>().apply{value=""}
+    var times: MutableLiveData<Int> =MutableLiveData<Int>().apply { value=0 }
+
     public fun getDice1Value():Int?{
         return this.dice1Number.value
     }
@@ -29,6 +31,14 @@ class MainActivityViewModel:ViewModel() {
     }
     public fun setUsernameValue(value:String?){
         this.username.value=value
+    }
+
+    public fun getTimes():Int?{
+        return this.times.value
+    }
+
+    public fun setTimes(value:Int?){
+        this.times.value=value
     }
 
 }
